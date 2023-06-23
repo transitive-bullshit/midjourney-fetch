@@ -20,6 +20,12 @@ export class Midjourney {
 
   protected readonly token: string;
 
+  protected readonly applicationId: string;
+
+  protected readonly version: string;
+
+  protected readonly id: string;
+
   timeout: number;
 
   interval: number;
@@ -31,12 +37,20 @@ export class Midjourney {
       channelId,
       serverId,
       token,
+      applicationId = midjourneyBotConfigs.applicationId,
+      version = midjourneyBotConfigs.version,
+      id = midjourneyBotConfigs.id,
       timeout = configs.timeout,
       interval = configs.interval,
     } = props;
+
     this.channelId = channelId;
     this.serverId = serverId;
     this.token = token;
+
+    this.applicationId = applicationId;
+    this.version = version;
+    this.id = id;
 
     this.timeout = timeout;
     this.interval = interval;
@@ -46,6 +60,7 @@ export class Midjourney {
 
   protected log(...args: any) {
     if (this.debugger) {
+      // eslint-disable-next-line no-console
       console.log(...args);
     }
   }
@@ -64,13 +79,13 @@ export class Midjourney {
   async createImage(prompt: string) {
     const payload = {
       type: 2,
-      application_id: midjourneyBotConfigs.applicationId,
+      application_id: this.applicationId,
       guild_id: this.serverId,
       channel_id: this.channelId,
       session_id: defaultSessionId,
       data: {
-        version: midjourneyBotConfigs.version,
-        id: midjourneyBotConfigs.id,
+        version: this.version,
+        id: this.id,
         name: 'imagine',
         type: 1,
         options: [
@@ -81,9 +96,9 @@ export class Midjourney {
           },
         ],
         application_command: {
-          id: midjourneyBotConfigs.id,
-          application_id: midjourneyBotConfigs.applicationId,
-          version: midjourneyBotConfigs.version,
+          id: this.id,
+          application_id: this.applicationId,
+          version: this.version,
           default_permission: true,
           default_member_permissions: null,
           type: 1,
@@ -120,6 +135,8 @@ export class Midjourney {
       }
       throw new Error(message || `Create image failed with ${res.status}`);
     }
+
+    return res;
   }
 
   async createUpscaleOrVariation(
@@ -133,7 +150,7 @@ export class Midjourney {
       channel_id: this.channelId,
       message_flags: 0,
       message_id: messageId,
-      application_id: midjourneyBotConfigs.applicationId,
+      application_id: this.applicationId,
       session_id: defaultSessionId,
       data: {
         component_type: 2,

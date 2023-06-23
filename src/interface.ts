@@ -6,6 +6,11 @@ export interface MidjourneyProps {
   channelId: string;
   serverId: string;
   token: string;
+
+  applicationId?: string;
+  version?: string;
+  id?: string;
+
   timeout?: number; // default timeout: 5 min
   interval?: number; // default interval: 15s
 }
